@@ -701,6 +701,11 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().default_vitality = value;
     }
 
+    const Vector_t<some<Spell_t*>>& Members_t::Ghost_Abilities() const
+    {
+        return State().ghost_abilities;
+    }
+
     some<Quest_t*> Members_t::Quest()
     {
         return Consts_t::NPCP::Quest::Members();
@@ -774,20 +779,25 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT_SOME(actor);
 
-        maybe<Member_ID_t> id = Inactive_ID();
-        if (id) {
-            Write_Locker_t locker(actor->x_list.lock);
-            Member_t& member = Member(id());
-            member.Set(id(), actor, none<Actor_t*>());
-            if (member.Is_Active()) {
-                Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
-                return &member;
+        if (Do_Force_Clone_Uniques() && actor->Is_Unique() ||
+            Do_Force_Clone_Generics() && actor->Is_Generic()) {
+            return Add_Clone(actor);
+        } else {
+            maybe<Member_ID_t> id = Inactive_ID();
+            if (id) {
+                Write_Locker_t locker(actor->x_list.lock);
+                Member_t& member = Member(id());
+                member.Set(id(), actor, none<Actor_t*>());
+                if (member.Is_Active()) {
+                    Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                    return &member;
+                } else {
+                    Alias(id())->Unfill(none<Virtual::Callback_i*>());
+                    return none<Member_t*>();
+                }
             } else {
-                Alias(id())->Unfill(none<Virtual::Callback_i*>());
                 return none<Member_t*>();
             }
-        } else {
-            return none<Member_t*>();
         }
     }
 
@@ -910,43 +920,5 @@ namespace doticu_skylib { namespace doticu_npcp {
         State().save.~Save_t();
         new (&State().save) Save_t();
     }
-
-    
-
-
-
-
-
-
-    // this basically needs to go in Member_t, except the crap that can be taken out.
-    /*static void Add_Member(some<Members_t*> self, Member_ID_t member_id, some<Actor_t*> actor, some<Actor_Base_t*> base)
-    {
-        SKYLIB_ASSERT_SOME(self);
-        SKYLIB_ASSERT_SOME(actor);
-        SKYLIB_ASSERT_SOME(base);
-
-        self->save_state.actors[member_id] = actor();
-        self->save_state.original_bases[member_id] = base();
-
-        // do we handle flags here also?
-
-        self->save_state.names[member_id] = actor->Name();
-
-        self->save_state.caches[member_id] = none<Reference_t*>();
-        self->save_state.combat_styles[member_id] = self->save_state.default_combat_style();
-        self->save_state.ghost_abilities[member_id] = none<Spell_t*>(); // maybe should look at actor for any acceptable ability
-        self->save_state.outfits[member_id] = base->Default_Outfit();
-        self->save_state.packs[member_id] = none<Reference_t*>();
-        self->save_state.suitcases[member_id] = none<Member_Suitcase_t*>();
-        self->save_state.voice_types[member_id] = none<Voice_Type_t*>(); // we need to have 2 defaults: male/female
-
-        self->save_state.alphas[member_id] = Members_t::DEFAULT_ALPHA;
-        self->save_state.ratings[member_id] = Members_t::DEFAULT_RATING;
-        self->save_state.relations[member_id] = self->save_state.default_relation;
-        self->save_state.suit_types[member_id] = self->save_state.default_suit_type;
-        self->save_state.vitalities[member_id] = self->save_state.default_vitality;
-
-        
-    }*/
 
 }}

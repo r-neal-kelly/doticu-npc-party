@@ -98,10 +98,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         Followers_t&    Followers();
 
     public:
-        some<Script_t*>             Script(some<Member_ID_t> member_id);
-
-        maybe<Member_Update_AI_e>   Update_AI(some<Member_ID_t> member_id);
-        void                        Update_AI(some<Member_ID_t> member_id, some<Member_Update_AI_e> value);
+        some<Script_t*> Script(some<Member_ID_t> member_id);
+        void            Update_AI(some<Member_ID_t> member_id, some<Member_Update_AI_e> value);
 
     public:
         void    Evaluate();

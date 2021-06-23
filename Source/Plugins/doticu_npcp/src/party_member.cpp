@@ -319,11 +319,10 @@ namespace doticu_skylib { namespace doticu_npcp {
                 Is_Clone(true);
             }
 
-            // need to fill in more default values
-
-            Vitality(members.Default_Vitality());
-
-            Name(actor->Any_Name());
+            Alpha(members.Default_Alpha());
+            Combat_Style(members.Default_Combat_Style());
+            Rating(members.Default_Rating());
+            Relation(members.Default_Relation());
 
             {
                 maybe<Member_Suit_Type_e> default_suit_type = members.Default_Suit_Type();
@@ -339,11 +338,13 @@ namespace doticu_skylib { namespace doticu_npcp {
                     } else {
                         Add_Suit(Member_Suit_Type_e::MEMBER, actor, false);
                     }
+
                     if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
                         Add_Suit(default_suit_type(), default_suit_type().As_Template());
                     }
                 } else {
                     Add_Suit(Member_Suit_Type_e::MEMBER);
+
                     if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
                         Add_Suit(default_suit_type());
                     }
@@ -351,7 +352,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
                 Suit_Type(default_suit_type);
 
-                if (default_suit_type) {
+                if (members.Do_Suits() && default_suit_type) {
                     Suitcase()->Apply_Suit(
                         default_suit_type(),
                         actor,
@@ -361,6 +362,21 @@ namespace doticu_skylib { namespace doticu_npcp {
                     );
                 }
             }
+
+            Vitality(members.Default_Vitality());
+
+            const Vector_t<some<Spell_t*>>& ghost_abilities = members.Ghost_Abilities();
+            for (size_t idx = 0, end = ghost_abilities.size(); idx < end; idx += 1) {
+                some<Spell_t*> ghost_ability = ghost_abilities[idx];
+                if (actor->Has_Magic_Effects(ghost_ability)) {
+                    Ghost_Ability(ghost_ability);
+                    break;
+                }
+            }
+
+            Outfit(Actual_Base()->Default_Outfit());
+
+            Name(actor->Any_Name());
 
             Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
         }
@@ -408,6 +424,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 } else {
                     actor->x_list.Destroy_Extra_Text_Display();
                 }
+                actor->Update_Equipment();
             }
         }
         actor = none<Actor_t*>();
@@ -755,7 +772,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().flags_only_playables.Is_Flagged(flag, value);
     }
 
-    some<Member_ID_t> Member_t::Member_ID()
+    some<Member_ID_t> Member_t::Member_ID() const
     {
         SKYLIB_ASSERT(Is_Active());
 
@@ -873,6 +890,13 @@ namespace doticu_skylib { namespace doticu_npcp {
         } else {
             return none<Follower_t*>();
         }
+    }
+
+    some<Script_t*> Member_t::Script() const
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Party().Script(Member_ID());
     }
 
     maybe<Member_Alpha_t> Member_t::Alpha()
@@ -1316,49 +1340,16 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Members_t& members = Members();
         some<Actor_t*> actor = Actor();
         some<Actor_Base_t*> custom_base = Custom_Base();
-
-        actor->Actor_Base(custom_base, false);
-
-        actor->Faction_Rank(Consts_t::NPCP::Faction::Member(), 0);
-
-        Tokenize(Consts_t::NPCP::Misc::Token::Member(), Member_ID()() + 1);
-
-        custom_base->Name(Name(), false);
-        actor->x_list.Destroy_Extra_Text_Display();
-
-        // we maybe should do this only outside of combat to prevent equipment repeatedly being requipped.
-        maybe<Member_Suit_Type_e> suit_type = Suit_Type();
-        if (suit_type) {
-            some<Member_Suitcase_t*> suitcase = Suitcase();
-            if (suitcase->Has_Inactive_Outfit_Item(actor)) {
-                // we need to have either a global option or member option here, to initiate the auto-change
-                Suit_Type(none<Member_Suit_Type_e>());
-                suit_type = none<Member_Suit_Type_e>();
-            }
-            if (suit_type) {
-                suitcase->Apply_Suit(
-                    suit_type(),
-                    actor,
-                    Has_Only_Playables(suit_type()),
-                    members.Do_Suits_Strictly(),
-                    members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()
-                );
-            }
-        }
-
-        custom_base->Vitality(Vitality(), false);
-
-        return;
-
-        // we may want a different smaller branch if the actor is in combat, or a separate func to call
-        
-       
+        some<Faction_t*> member_faction = Consts_t::NPCP::Faction::Member();
 
         Vector_t<some<Spell_t*>> spells_to_add;
         spells_to_add.reserve(4);
 
-        
-        
+        actor->Actor_Base(custom_base, false);
+
+        actor->Faction_Rank(member_faction, 0);
+
+        Tokenize(Consts_t::NPCP::Misc::Token::Member(), Member_ID()() + 1);
 
         if (Is_Banished()) {
             Tokenize(Consts_t::NPCP::Misc::Token::Banished());
@@ -1386,13 +1377,13 @@ namespace doticu_skylib { namespace doticu_npcp {
             Tokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (!actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(true, Party().Script(Member_ID()));
+                actor->Is_Forced_To_Sneak(true, Script());
             }
         } else {
             Untokenize(Consts_t::NPCP::Misc::Token::Sneak());
 
             if (actor->Is_Forced_To_Sneak()) {
-                actor->Is_Forced_To_Sneak(false, Party().Script(Member_ID()));
+                actor->Is_Forced_To_Sneak(false, Script());
             }
         }
 
@@ -1402,35 +1393,77 @@ namespace doticu_skylib { namespace doticu_npcp {
             Untokenize(Consts_t::NPCP::Misc::Token::Thrall());
         }
 
-        custom_base->Combat_Style(Combat_Style());
-
-        /*maybe<Spell_t*> ghost_ability = Ghost_Ability();
-        for (size_t idx = 0, end = members.vanilla_ghost_abilities.size(); idx < end; idx += 1) {
-            some<Spell_t*> vanilla_ghost_ability = members.vanilla_ghost_abilities[idx];
-            if (vanilla_ghost_ability != ghost_ability) {
-                actor->Remove_Spell(members.vanilla_ghost_abilities[idx]);
-            }
-        }
-        if (ghost_ability) {
-            spells_to_add.push_back(ghost_ability());
-        }*/
-
-        maybe<Outfit_t*> outfit = Outfit();
-        maybe<Outfit_t*> custom_outfit = custom_base->Default_Outfit();
-        if (outfit != custom_outfit) {
-            Outfit(custom_outfit);
-        }
-
-        // if we limit to attached actors, we need to stop the disabling of suit on the first suitup
-        if (!actor->Is_In_Combat()) {
-            
-        }
-
-        custom_base->Voice_Type(Voice_Type()());
-
-        actor->Alpha(Alpha()(), Party().Script(Member_ID()));
+        actor->Alpha(Alpha()(), Script());
 
         custom_base->Relation(Const::Actor_Base::Player(), Relation());
+
+        // we maybe should do this only outside of combat to prevent equipment repeatedly being requipped.
+        if (members.Do_Suits()) {
+            maybe<Member_Suit_Type_e> suit_type = Suit_Type();
+            if (suit_type) {
+                some<Member_Suitcase_t*> suitcase = Suitcase();
+                if (suitcase->Has_Inactive_Outfit_Item(actor)) {
+                    // we need to have either a global option or member option here, to initiate the auto-change
+                    Suit_Type(none<Member_Suit_Type_e>());
+                    suit_type = none<Member_Suit_Type_e>();
+                }
+                if (suit_type) {
+                    suitcase->Apply_Suit(
+                        suit_type(),
+                        actor,
+                        Has_Only_Playables(suit_type()),
+                        members.Do_Suits_Strictly(),
+                        members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()
+                    );
+                }
+            }
+        }
+
+        custom_base->Vitality(Vitality(), false);
+
+        custom_base->Combat_Style(Combat_Style());
+
+        {
+            maybe<Spell_t*> ghost_ability = Ghost_Ability();
+            const Vector_t<some<Spell_t*>>& ghost_abilities = members.Ghost_Abilities();
+            for (size_t idx = 0, end = ghost_abilities.size(); idx < end; idx += 1) {
+                some<Spell_t*> vanilla_ghost_ability = ghost_abilities[idx];
+                if (vanilla_ghost_ability != ghost_ability) {
+                    actor->Remove_Spell(ghost_abilities[idx]);
+                }
+            }
+            if (ghost_ability) {
+                spells_to_add.push_back(ghost_ability());
+            }
+        }
+        
+        {
+            maybe<Outfit_t*> outfit = Outfit();
+            maybe<Outfit_t*> custom_outfit = custom_base->Default_Outfit();
+            if (outfit != custom_outfit) {
+                Outfit(custom_outfit);
+                // maybe check global option and switch to none outfit to disable changing the current gear?
+                // or do we need to clean up? we'll have to move this above the suitcase update code
+            }
+        }
+
+        custom_base->Voice_Type(Voice_Type());
+
+        custom_base->Name(Name(), false);
+        actor->x_list.Destroy_Extra_Text_Display();
+
+        if (actor->Is_Attached()) {
+            for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
+                some<Spell_t*> spell = spells_to_add[idx];
+                if (!actor->Has_Magic_Effects(spell)) {
+                    actor->Reset_Spell(spell);
+                }
+            }
+        } else {
+            for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
+                actor->Remove_Spell(spells_to_add[idx]);
+            }
+        }
 
         if (Is_Enabled()) {
             if (actor->Is_Disabled()) {
@@ -1459,28 +1492,16 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
         }
 
-        if (actor->Is_Attached()) {
-            for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
-                some<Spell_t*> spell = spells_to_add[idx];
-                if (!actor->Has_Magic_Effects(spell)) {
-                    actor->Reset_Spell(spell);
-                }
-            }
-        } else {
-            for (size_t idx = 0, end = spells_to_add.size(); idx < end; idx += 1) {
-                actor->Remove_Spell(spells_to_add[idx]);
-            }
-        }
-
-        /*maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
+        maybe<Actor_t*> combat_target = actor->Current_Combat_Target();
         if (combat_target) {
-            if (combat_target == Const::Actor::Player() || members.Has(combat_target())) {// just check token to make it parallel
+            if (combat_target == Const::Actor::Player() || combat_target == actor || combat_target->Is_In_Faction(member_faction)) {
+                // Is_In_Faction has to lock the combat_target, which can cause a little slow down in parallel.
                 // we need to handle aggression also, but that needs to be done along with other factors?
                 actor->Stop_Combat_And_Alarm();
                 actor->actor_flags_2.Unflag(Actor_Flags_2_e::IS_ANGRY_WITH_PLAYER);
                 Party().Update_AI(Member_ID(), Member_Update_AI_e::RESET_AI);
             }
-        }*/
+        }
     }
 
 }}

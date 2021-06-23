@@ -58,7 +58,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             maybe<Actor_Base_t*>            actual_base;
             maybe<Actor_t*>                 actor;
 
-            Member_Flags_e                  flags; // make separate
+            Member_Flags_e                  flags;
             Member_Flags_Has_Suit_e         flags_has_suit;
             Member_Flags_Only_Playables_e   flags_only_playables;
 
@@ -212,7 +212,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Has_Only_Playables(some<Member_Suit_Type_e> type) const;
         void                        Has_Only_Playables(some<Member_Suit_Type_e> type, Bool_t value);
 
-        some<Member_ID_t>           Member_ID();
+        some<Member_ID_t>           Member_ID() const;
 
         some<Alias_Reference_t*>    Alias();
         some<Actor_Base_t*>         Actual_Base();
@@ -223,6 +223,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Expoee_t*>            Expoee();
         maybe<Display_t*>           Display();
         maybe<Follower_t*>          Follower();
+
+        some<Script_t*>             Script() const;
 
         maybe<Member_Alpha_t>       Alpha();
         void                        Alpha(some<Member_Alpha_t> alpha);

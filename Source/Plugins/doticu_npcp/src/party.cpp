@@ -207,13 +207,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         return script();
     }
 
-    maybe<Member_Update_AI_e> Party_t::Update_AI(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        return State().update_ais[member_id()];
-    }
-
     void Party_t::Update_AI(some<Member_ID_t> member_id, some<Member_Update_AI_e> value)
     {
         SKYLIB_ASSERT_SOME(member_id);
@@ -328,7 +321,9 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Member_t& member = Members().Member(id);
         if (member.Is_Active()) {
-            Write_Locker_t locker(member.Actor()->x_list.lock);
+            some<Actor_t*> actor = member.Actor();
+            Write_Locker_t locker(actor->x_list.lock);
+
             member.Evaluate_In_Parallel(parallel_lock);
             maybe<Display_t*> display = member.Display();
             if (display) {
@@ -349,6 +344,14 @@ namespace doticu_skylib { namespace doticu_npcp {
                     }
                 }
             }
+
+            maybe<Member_Update_AI_e>& update_ai = State().update_ais[member.Member_ID()()];
+            if (update_ai == Member_Update_AI_e::RESET_AI) {
+                actor->Evaluate_Package(false, true);
+            } else if (update_ai == Member_Update_AI_e::EVALUATE_PACKAGE) {
+                actor->Evaluate_Package(false, false);
+            }
+            update_ai = Member_Update_AI_e::_NONE_;
         }
     }
 

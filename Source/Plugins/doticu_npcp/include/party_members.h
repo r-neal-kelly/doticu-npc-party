@@ -242,6 +242,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Member_Vitality_e>        Default_Vitality();
         void                            Default_Vitality(maybe<Member_Vitality_e> value);
 
+        const Vector_t<some<Spell_t*>>& Ghost_Abilities() const;
+
     public:
         some<Quest_t*>              Quest();
         some<Alias_Reference_t*>    Alias(some<Member_ID_t> member_id);
