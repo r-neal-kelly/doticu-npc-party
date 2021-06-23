@@ -18,8 +18,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         {
             _NONE_ = -1,
 
-            BASE,
-            REFERENCE,
+            ORIGINAL_BASE,
+            ORIGINAL_ACTOR,
 
             _TOTAL_,
         };
@@ -34,8 +34,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         {
             static const char* const strings[_TOTAL_] =
             {
-                SKYLIB_ENUM_TO_STRING(BASE),
-                SKYLIB_ENUM_TO_STRING(REFERENCE),
+                SKYLIB_ENUM_TO_STRING(ORIGINAL_BASE),
+                SKYLIB_ENUM_TO_STRING(ORIGINAL_ACTOR),
             };
 
             return strings;

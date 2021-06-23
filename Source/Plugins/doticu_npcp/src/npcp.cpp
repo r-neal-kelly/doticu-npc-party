@@ -539,7 +539,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
                         some<Actor_Base_t*> vici = static_cast<Actor_Base_t*>(Game_t::Form(0x0001327A)());
                         for (size_t idx = 0, end = 12; idx < end; idx += 1) {
-                            maybe<Member_t*> member = members.Add(vici);
+                            maybe<Member_t*> member = members.Add_Spawn(vici);
                             if (member) {
                                 member->Name(std::to_string(idx));
                             }

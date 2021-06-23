@@ -47,7 +47,7 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         static constexpr Member_Limit_t::value_type             DEFAULT_LIMIT                           = MAX_MEMBERS;
         static constexpr Member_Sort_Type_e::value_type         DEFAULT_SORT_TYPE                       = Member_Sort_Type_e::NAME;
-        static constexpr Member_Clone_Suit_Type_e::value_type   DEFAULT_CLONE_SUIT_TYPE                 = Member_Clone_Suit_Type_e::REFERENCE;
+        static constexpr Member_Clone_Suit_Type_e::value_type   DEFAULT_CLONE_SUIT_TYPE                 = Member_Clone_Suit_Type_e::ORIGINAL_ACTOR;
 
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_AURA_PERCENT          = 100;
         static constexpr Percent_t::value_type                  DEFAULT_FILL_SUIT_BODY_PERCENT          = 100;
@@ -253,8 +253,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         size_t                      Inactive_Count();
 
         Bool_t                      Has(some<Actor_t*> actor);
-        maybe<Member_t*>            Add(some<Actor_t*> actor, Bool_t do_clone);
-        maybe<Member_t*>            Add(some<Actor_Base_t*> base);
+        maybe<Member_t*>            Add(some<Actor_t*> actor);
+        maybe<Member_t*>            Add_Clone(some<Actor_t*> actor);
+        maybe<Member_t*>            Add_Spawn(some<Actor_Base_t*> base);
         Bool_t                      Remove(Member_t& member);
         Bool_t                      Remove(some<Actor_t*> actor);
 

@@ -239,65 +239,6 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
     }
 
-    Member_t::Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone) : // we need original actor or a separate ctor
-        state()
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-        SKYLIB_ASSERT_SOME(actor);
-
-        Save().member_id = member_id;
-        Save().actual_base = actor->Actor_Base();
-        Save().actor = actor;
-
-        if (Is_Active()) {
-            Members_t& members = Members();
-
-            Is_Clone(is_clone);
-
-            Name(actor->Any_Name());
-
-            {
-                maybe<Member_Suit_Type_e> default_suit_type = members.Default_Suit_Type();
-
-                if (members.Do_Fill_Suits_Automatically()) {
-                    if (Is_Clone()) {
-                        // so the Clone_Suit_Type determines whether we use a ref or a base to fill the member suit.
-                        // with a clone, that ref should be the original actor. when we clone, we could just copy all the items onto clone first
-                        Add_Suit(Member_Suit_Type_e::MEMBER, Actual_Base());
-                    } else {
-                        Add_Suit(Member_Suit_Type_e::MEMBER, actor, false);
-                    }
-                    if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                        Add_Suit(default_suit_type(), default_suit_type().As_Template());
-                    }
-                } else {
-                    Add_Suit(Member_Suit_Type_e::MEMBER);
-                    if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
-                        Add_Suit(default_suit_type());
-                    }
-                }
-
-                Suit_Type(default_suit_type);
-                
-                if (default_suit_type) {
-                    Suitcase()->Apply_Suit(
-                        default_suit_type(),
-                        actor,
-                        Has_Only_Playables(default_suit_type()),
-                        members.Do_Suits_Strictly(),
-                        members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()
-                    );
-                }
-            }
-
-            Vitality(members.Default_Vitality());
-
-            // need to fill in default values
-
-            Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
-        }
-    }
-
     Member_t::~Member_t()
     {
     }
@@ -309,8 +250,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Member_t::On_Before_Save_Game(std::ofstream& file)
     {
         if (Is_Active()) {
-            // we check, because I'm not sure if auto creating a ref here would freeze the game.
-            // we should try it.
+            // we check for actor, because I'm not sure if auto creating a ref here would freeze the game.
             if (Save().actor) {
                 Save().actor->Actor_Base(Actual_Base(), false);
             }
@@ -358,6 +298,133 @@ namespace doticu_skylib { namespace doticu_npcp {
     const Member_t::Save_t& Member_t::Save() const
     {
         return this->state.save;
+    }
+
+    void Member_t::Set(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original)
+    {
+        SKYLIB_ASSERT_SOME(member_id);
+        SKYLIB_ASSERT_SOME(actor);
+
+        Unset();
+
+        Save().member_id = member_id;
+
+        Save().actual_base = actor->Actor_Base();
+        Save().actor = actor;
+
+        if (Is_Active()) {
+            Members_t& members = Members();
+
+            if (original) {
+                Is_Clone(true);
+            }
+
+            // need to fill in more default values
+
+            Vitality(members.Default_Vitality());
+
+            Name(actor->Any_Name());
+
+            {
+                maybe<Member_Suit_Type_e> default_suit_type = members.Default_Suit_Type();
+
+                if (members.Do_Fill_Suits_Automatically()) {
+                    if (original) {
+                        if (members.Clone_Suit_Type() == Member_Clone_Suit_Type_e::ORIGINAL_ACTOR) {
+                            Add_Suit(Member_Suit_Type_e::MEMBER, original(), true);
+                        } else {
+                            maybe<Actor_Base_t*> original_base = original->Actor_Base();
+                            Add_Suit(Member_Suit_Type_e::MEMBER, original_base ? original_base() : Actual_Base());
+                        }
+                    } else {
+                        Add_Suit(Member_Suit_Type_e::MEMBER, actor, false);
+                    }
+                    if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
+                        Add_Suit(default_suit_type(), default_suit_type().As_Template());
+                    }
+                } else {
+                    Add_Suit(Member_Suit_Type_e::MEMBER);
+                    if (default_suit_type && default_suit_type != Member_Suit_Type_e::MEMBER) {
+                        Add_Suit(default_suit_type());
+                    }
+                }
+
+                Suit_Type(default_suit_type);
+
+                if (default_suit_type) {
+                    Suitcase()->Apply_Suit(
+                        default_suit_type(),
+                        actor,
+                        Has_Only_Playables(default_suit_type()),
+                        members.Do_Suits_Strictly(),
+                        members.Do_Unfill_Suits_Into_Pack() ? Pack()() : none<Reference_t*>()()
+                    );
+                }
+            }
+
+            Party().Update_AI(member_id, Member_Update_AI_e::RESET_AI);
+        }
+    }
+
+    void Member_t::Unset()
+    {
+        const Members_t& members = Members();
+
+        maybe<Member_ID_t>& member_id = Save().member_id;
+
+        maybe<Actor_Base_t*>& actual_base = Save().actual_base;
+        maybe<Actor_Base_t*>& custom_base = State().custom_base;
+        maybe<Actor_t*>& actor = Save().actor;
+
+        Bool_t is_clone = Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE);
+
+        maybe<Member_Pack_t*>& pack = Save().pack;
+        maybe<Member_Suitcase_t*>& suitcase = Save().suitcase;
+
+        String_t& name = Save().name;
+
+        if (suitcase) {
+            Member_Suitcase_t::Destroy(suitcase());
+        }
+        suitcase = none<Member_Suitcase_t*>();
+
+        if (pack) {
+            Member_Pack_t::Destroy(pack());
+        }
+        pack = none<Member_Pack_t*>();
+
+        if (actor) {
+            if (actual_base) {
+                actor->Actor_Base(actual_base(), false);
+            }
+
+            if (is_clone &&
+                (actor->Is_Unique() && members.Do_Force_Unclone_Uniques() ||
+                 actor->Is_Generic() && members.Do_Force_Unclone_Generics())) {
+                actor->Mark_For_Delete();
+            } else {
+                if (name) {
+                    actor->Name(name);
+                } else {
+                    actor->x_list.Destroy_Extra_Text_Display();
+                }
+            }
+        }
+        actor = none<Actor_t*>();
+
+        if (custom_base) {
+            Actor_Base_t::Destroy(custom_base());
+        }
+        custom_base = none<Actor_Base_t*>();
+
+        actual_base = none<Actor_Base_t*>();
+
+        if (member_id) {
+            Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
+        }
+
+        this->~Member_t();
+        new (this) Member_t();
     }
 
     maybe<Settler_ID_t> Member_t::Paired_Settler_ID() const
@@ -438,67 +505,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         } else {
             return none<Follower_t*>();
         }
-    }
-
-    void Member_t::Reset()
-    {
-        const Members_t& members = Members();
-
-        maybe<Member_ID_t>& member_id = Save().member_id;
-
-        maybe<Actor_Base_t*>& actual_base = Save().actual_base;
-        maybe<Actor_Base_t*>& custom_base = State().custom_base;
-        maybe<Actor_t*>& actor = Save().actor;
-
-        Bool_t is_clone = Save().flags.Is_Flagged(Member_Flags_e::IS_CLONE);
-
-        maybe<Member_Pack_t*>& pack = Save().pack;
-        maybe<Member_Suitcase_t*>& suitcase = Save().suitcase;
-
-        String_t& name = Save().name;
-
-        if (suitcase) {
-            Member_Suitcase_t::Destroy(suitcase());
-        }
-        suitcase = none<Member_Suitcase_t*>();
-
-        if (pack) {
-            Member_Pack_t::Destroy(pack());
-        }
-        pack = none<Member_Pack_t*>();
-
-        if (actor) {
-            if (actual_base) {
-                actor->Actor_Base(actual_base(), false);
-            }
-
-            if (is_clone &&
-                (actor->Is_Unique() && members.Do_Force_Unclone_Uniques() ||
-                 actor->Is_Generic() && members.Do_Force_Unclone_Generics())) {
-                actor->Mark_For_Delete();
-            } else {
-                if (name) {
-                    actor->Name(name);
-                } else {
-                    actor->x_list.Destroy_Extra_Text_Display();
-                }
-            }
-        }
-        actor = none<Actor_t*>();
-
-        if (custom_base) {
-            Actor_Base_t::Destroy(custom_base());
-        }
-        custom_base = none<Actor_Base_t*>();
-
-        actual_base = none<Actor_Base_t*>();
-
-        if (member_id) {
-            Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
-        }
-
-        this->~Member_t();
-        new (this) Member_t();
     }
 
     Bool_t Member_t::Is_Active() const

@@ -123,7 +123,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     public:
         Member_t();
-        Member_t(some<Member_ID_t> member_id, some<Actor_t*> actor, Bool_t is_clone);
         Member_t(const Member_t& other) = delete;
         Member_t(Member_t&& other) noexcept = delete;
         Member_t& operator =(const Member_t& other) = delete;
@@ -144,6 +143,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&                 Save();
         const Save_t&           Save() const;
 
+        void                    Set(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original);
+        void                    Unset();
+
         maybe<Settler_ID_t>     Paired_Settler_ID() const;
         void                    Paired_Settler_ID(maybe<Settler_ID_t> settler_id);
         maybe<Settler_t*>       Paired_Settler() const;
@@ -159,8 +161,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         maybe<Follower_ID_t>    Paired_Follower_ID() const;
         void                    Paired_Follower_ID(maybe<Follower_ID_t> follower_id);
         maybe<Follower_t*>      Paired_Follower() const;
-
-        void                    Reset();
 
     public:
         Bool_t                      Is_Active() const;

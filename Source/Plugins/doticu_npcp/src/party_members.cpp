@@ -770,48 +770,48 @@ namespace doticu_skylib { namespace doticu_npcp {
         return Member(actor) != none<Member_t*>();
     }
 
-    maybe<Member_t*> Members_t::Add(some<Actor_t*> actor, Bool_t do_clone)
+    maybe<Member_t*> Members_t::Add(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
 
-        if (do_clone) {
-            maybe<Member_ID_t> id = Inactive_ID();
-            if (id) {
-                maybe<Actor_Base_t*> base = actor->Actor_Base();
-                if (base) {
-                    maybe<Actor_t*> clone = Actor_t::Create(base(), true, true, true);
-                    if (clone) {
-                        Write_Locker_t locker(clone->x_list.lock);
-                        Member_t& member = Member(id());
-                        member.~Member_t();
-                        new (&member) Member_t(id(), clone(), true);
-                        if (member.Is_Active()) {
-                            Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
-                            return &member;
-                        } else {
-                            Alias(id())->Unfill(none<Virtual::Callback_i*>());
-                            return none<Member_t*>();
-                        }
+        maybe<Member_ID_t> id = Inactive_ID();
+        if (id) {
+            Write_Locker_t locker(actor->x_list.lock);
+            Member_t& member = Member(id());
+            member.Set(id(), actor, none<Actor_t*>());
+            if (member.Is_Active()) {
+                Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                return &member;
+            } else {
+                Alias(id())->Unfill(none<Virtual::Callback_i*>());
+                return none<Member_t*>();
+            }
+        } else {
+            return none<Member_t*>();
+        }
+    }
+
+    maybe<Member_t*> Members_t::Add_Clone(some<Actor_t*> actor)
+    {
+        SKYLIB_ASSERT_SOME(actor);
+
+        maybe<Member_ID_t> id = Inactive_ID();
+        if (id) {
+            maybe<Actor_Base_t*> base = actor->Actor_Base();
+            if (base) {
+                maybe<Actor_t*> clone = Actor_t::Create(base(), true, true, true);
+                if (clone) {
+                    Write_Locker_t locker(clone->x_list.lock);
+                    Member_t& member = Member(id());
+                    member.Set(id(), clone(), actor);
+                    if (member.Is_Active()) {
+                        Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
+                        return &member;
                     } else {
+                        Alias(id())->Unfill(none<Virtual::Callback_i*>());
                         return none<Member_t*>();
                     }
                 } else {
-                    return none<Member_t*>();
-                }
-            } else {
-                return none<Member_t*>();
-            }
-        } else if (!Has(actor)) {
-            maybe<Member_ID_t> id = Inactive_ID();
-            if (id) {
-                Member_t& member = Member(id());
-                member.~Member_t();
-                new (&member) Member_t(id(), actor, false);
-                if (member.Is_Active()) {
-                    Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
-                    return &member;
-                } else {
-                    Alias(id())->Unfill(none<Virtual::Callback_i*>());
                     return none<Member_t*>();
                 }
             } else {
@@ -822,12 +822,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    maybe<Member_t*> Members_t::Add(some<Actor_Base_t*> base)
+    maybe<Member_t*> Members_t::Add_Spawn(some<Actor_Base_t*> base)
     {
         maybe<Actor_t*> actor = Actor_t::Create(base, true, true, true);
         if (actor) {
             Write_Locker_t locker(actor->x_list.lock);
-            return Add(actor(), false);
+            return Add(actor());
         } else {
             return none<Member_t*>();
         }
@@ -857,7 +857,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
 
             member.Alias()->Unfill(none<Virtual::Callback_i*>());
-            member.Reset();
+            member.Unset();
 
             return true;
         } else {

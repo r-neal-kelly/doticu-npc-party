@@ -338,7 +338,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (member) {
             return Add(*member);
         } else {
-            member = Members().Add(actor, false);
+            member = Members().Add(actor);
             if (member) {
                 return Add(*member);
             } else {
