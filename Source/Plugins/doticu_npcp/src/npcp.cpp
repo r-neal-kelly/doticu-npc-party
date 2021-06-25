@@ -250,6 +250,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (Is_Valid()) {
             Party().On_Before_Load_Game();
             Hotkeys().On_Before_Load_Game();
+
+            Delete_State();
         }
     }
 

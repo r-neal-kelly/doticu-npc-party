@@ -20,13 +20,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         return Consts_t::NPCP::Misc::Token::Settler_Guard();
     }
 
-    Settler_Guard_t::Save_t::Save_t() :
-        flags(),
-        time(),
-        duration(),
-        marker(),
-        radius(),
-        speed()
+    Settler_Guard_t::Save_t::Save_t()
     {
     }
 
@@ -36,22 +30,10 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Guard_t::Save_t::Write(std::ofstream& file)
     {
-        NPCP.Write(file, this->flags);
-        NPCP.Write(file, this->time);
-        NPCP.Write(file, this->duration);
-        this->marker.Write(file);
-        NPCP.Write(file, this->radius);
-        NPCP.Write(file, this->speed);
     }
 
     void Settler_Guard_t::Save_t::Read(std::ifstream& file)
     {
-        NPCP.Read(file, this->flags);
-        NPCP.Read(file, this->time);
-        NPCP.Read(file, this->duration);
-        this->marker.Read(file);
-        NPCP.Read(file, this->radius);
-        NPCP.Read(file, this->speed);
     }
 
     Settler_Guard_t::State_t::State_t() :
@@ -64,6 +46,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     }
 
     Settler_Guard_t::Settler_Guard_t() :
+        Settler_Type_i(),
         state()
     {
     }
@@ -74,32 +57,46 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Guard_t::On_After_New_Game()
     {
+        Settler_Type_i::On_After_New_Game();
     }
 
     void Settler_Guard_t::On_Before_Save_Game(std::ofstream& file)
     {
+        Settler_Type_i::On_Before_Save_Game(file);
+
         Save().Write(file);
     }
 
     void Settler_Guard_t::On_After_Save_Game()
     {
+        Settler_Type_i::On_After_Save_Game();
     }
 
     void Settler_Guard_t::On_Before_Load_Game()
     {
+        Settler_Type_i::On_Before_Load_Game();
     }
 
     void Settler_Guard_t::On_After_Load_Game(std::ifstream& file)
     {
+        Settler_Type_i::On_After_Load_Game(file);
+
         Save().Read(file);
     }
 
     void Settler_Guard_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
+        Settler_Type_i::On_After_Load_Game(file, version_to_update);
+
         Save().Read(file);
     }
 
     Settler_Guard_t::State_t& Settler_Guard_t::State()
+    {
+        return this->state;
+    }
+
+    const Settler_Guard_t::State_t& Settler_Guard_t::State() const
     {
         return this->state;
     }
@@ -109,14 +106,9 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
-    Bool_t Settler_Guard_t::Is_Enabled()
+    const Settler_Guard_t::Save_t& Settler_Guard_t::Save() const
     {
-        return Save().flags.Is_Flagged(Flags_e::IS_ENABLED);
-    }
-
-    void Settler_Guard_t::Is_Enabled(Bool_t value)
-    {
-        Save().flags.Is_Flagged(Flags_e::IS_ENABLED, value);
+        return State().save;
     }
 
     some<Package_t*> Settler_Guard_t::Package(some<Settler_ID_t> settler_id)

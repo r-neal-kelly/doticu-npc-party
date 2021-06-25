@@ -5,12 +5,8 @@
 #pragma once
 
 #include "intrinsic.h"
-#include "party_settler_eater.h"
-#include "party_settler_guard.h"
-#include "party_settler_sandboxer.h"
-#include "party_settler_sitter.h"
-#include "party_settler_sleeper.h"
-#include "party_settler_type.h"
+#include "party_settler_type_e.h"
+#include "party_settler_type_i.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
@@ -35,30 +31,12 @@ namespace doticu_skylib { namespace doticu_npcp {
             void    Read(std::ifstream& file);
         };
 
-        union Settler_u
-        {
-        public:
-            Settler_Sandboxer_t sandboxer;
-            Settler_Sleeper_t   sleeper;
-            Settler_Sitter_t    sitter;
-            Settler_Eater_t     eater;
-            Settler_Guard_t     guard;
-
-        public:
-            Settler_u();
-            Settler_u(const Settler_u& other) = delete;
-            Settler_u(Settler_u&& other) noexcept = delete;
-            Settler_u& operator =(const Settler_u& other) = delete;
-            Settler_u& operator =(Settler_u&& other) noexcept = delete;
-            ~Settler_u();
-        };
-
         class State_t
         {
         public:
-            Save_t      save;
+            Save_t          save;
 
-            Settler_u   settler;
+            Settler_Type_i  settler_interface;
 
         public:
             State_t();
@@ -90,8 +68,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&        State();
+        const State_t&  State() const;
+        Save_t&         Save();
+        const Save_t&   Save() const;
 
     public:
         Bool_t  Is_Active();

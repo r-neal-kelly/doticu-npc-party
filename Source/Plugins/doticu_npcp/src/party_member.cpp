@@ -163,10 +163,6 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::State_t::~State_t()
     {
-        if (this->custom_base) {
-            Actor_Base_t::Destroy(this->custom_base());
-        }
-        this->custom_base = none<Actor_Base_t*>();
     }
 
     String_t Member_t::Class_Name()
@@ -241,6 +237,17 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     Member_t::~Member_t()
     {
+        if (Is_Active()) {
+            maybe<Actor_t*> actor = Save().actor;
+            if (actor) {
+                actor->Actor_Base(Save().actual_base(), false);
+            }
+            maybe<Actor_Base_t*>& custom_base = State().custom_base;
+            if (custom_base) {
+                Actor_Base_t::Destroy(custom_base());
+                custom_base = none<Actor_Base_t*>();
+            }
+        }
     }
 
     void Member_t::On_After_New_Game()
@@ -300,12 +307,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state.save;
     }
 
-    void Member_t::Set(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original)
+    void Member_t::Activate(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original)
     {
         SKYLIB_ASSERT_SOME(member_id);
         SKYLIB_ASSERT_SOME(actor);
 
-        Unset();
+        Deactivate();
 
         Save().member_id = member_id;
 
@@ -382,7 +389,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         }
     }
 
-    void Member_t::Unset()
+    void Member_t::Deactivate()
     {
         const Members_t& members = Members();
 
@@ -439,6 +446,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         if (member_id) {
             Party().Update_AI(member_id(), Member_Update_AI_e::RESET_AI);
         }
+        member_id = none<Member_ID_t>();
 
         this->~Member_t();
         new (this) Member_t();
@@ -647,20 +655,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().flags.Is_Flagged(Member_Flags_e::IS_THRALL, value);
     }
 
-    Bool_t Member_t::Is_Enabled()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return !Is_Banished();
-    }
-
-    Bool_t Member_t::Is_Untouchable()
-    {
-        SKYLIB_ASSERT(Is_Active());
-
-        return Members().Has_Untouchable_Invulnerables() && Is_Invulnerable();
-    }
-
     Bool_t Member_t::Is_Warrior()
     {
         SKYLIB_ASSERT(Is_Active());
@@ -717,11 +711,25 @@ namespace doticu_skylib { namespace doticu_npcp {
         return Vitality() == Member_Vitality_e::INVULNERABLE;
     }
 
+    Bool_t Member_t::Is_Enabled()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return !Is_Banished();
+    }
+
+    Bool_t Member_t::Is_Untouchable()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return (Members().Has_Untouchable_Invulnerables() && Is_Invulnerable()) || Is_Mannequin() || Is_Expoee() || Is_Display();
+    }
+
     Bool_t Member_t::Has_AI()
     {
         SKYLIB_ASSERT(Is_Active());
 
-        return !Is_Banished() && !Is_Mannequin();
+        return !Is_Banished() && !Is_Mannequin() && !Is_Expoee() && !Is_Display();
     }
 
     Bool_t Member_t::Has_Suit(some<Member_Suit_Type_e> type)
@@ -1057,24 +1065,24 @@ namespace doticu_skylib { namespace doticu_npcp {
                 return Member_Suit_Type_e::IMMOBILE;
             } else if (Has_Suit(Member_Suit_Type_e::COMBATANT) && actor->Is_In_Combat()) {
                 return Member_Suit_Type_e::COMBATANT;
+            /*} else if (Has_Suit(Member_Suit_Type_e::GUARD) && Party().Is_Guarding(ID())) {
+                return Member_Suit_Type_e::GUARD;
+            } else if (Has_Suit(Member_Suit_Type_e::EATER) && Party().Is_Eating(ID())) {
+                return Member_Suit_Type_e::EATER;
+            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && Party().Is_Sitting(ID())) {
+                return Member_Suit_Type_e::SITTER;
+            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && Party().Is_Sleeping(ID())) {
+                return Member_Suit_Type_e::SLEEPER;
+            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && Party().Is_Active_Sandboxer(ID())) {
+                return Member_Suit_Type_e::SANDBOXER;*/
             } else if (location && Has_Suit(Member_Suit_Type_e::INN) && location->Is_Inn()) {
                 return Member_Suit_Type_e::INN;
             } else if (location && Has_Suit(Member_Suit_Type_e::HOME) && location->Is_Likely_Home()) {
                 return Member_Suit_Type_e::HOME;
             } else if (location && Has_Suit(Member_Suit_Type_e::SETTLEMENT) && location->Is_Likely_City_Or_Town()) {
                 return Member_Suit_Type_e::SETTLEMENT;
-            /*} else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && Party().Is_Follower(ID())) {
+            } else if (Has_Suit(Member_Suit_Type_e::FOLLOWER) && Is_Follower()) {
                 return Member_Suit_Type_e::FOLLOWER;
-            } else if (Has_Suit(Member_Suit_Type_e::GUARD) && Party().Is_Active_Guard(ID())) {
-                return Member_Suit_Type_e::GUARD;
-            } else if (Has_Suit(Member_Suit_Type_e::EATER) && Party().Is_Active_Eater(ID())) {
-                return Member_Suit_Type_e::EATER;
-            } else if (Has_Suit(Member_Suit_Type_e::SITTER) && Party().Is_Active_Sitter(ID())) {
-                return Member_Suit_Type_e::SITTER;
-            } else if (Has_Suit(Member_Suit_Type_e::SLEEPER) && Party().Is_Active_Sleeper(ID())) {
-                return Member_Suit_Type_e::SLEEPER;
-            } else if (Has_Suit(Member_Suit_Type_e::SANDBOXER) && Party().Is_Active_Sandboxer(ID())) {
-                return Member_Suit_Type_e::SANDBOXER;*/
             } else if (location && Has_Suit(Member_Suit_Type_e::DANGEROUS) && location->Is_Likely_Dangerous()) {
                 return Member_Suit_Type_e::DANGEROUS;
             } else if (location && Has_Suit(Member_Suit_Type_e::CIVILIZED) && location->Is_Likely_Civilized()) {

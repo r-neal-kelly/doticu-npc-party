@@ -96,6 +96,12 @@
     <ClCompile Include="src\party_member_pack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\party_settler_time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\party_settler_type_i.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\consts.h">
@@ -260,7 +266,7 @@
     <ClInclude Include="include\party_settler_sleeper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\party_settler_type.h">
+    <ClInclude Include="include\party_settler_type_e.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_settler_value_index.h">
@@ -297,6 +303,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\party_member_pack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\party_settler_type_i.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

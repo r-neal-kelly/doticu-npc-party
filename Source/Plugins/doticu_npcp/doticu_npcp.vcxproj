@@ -136,6 +136,8 @@
     <ClCompile Include="src\party_settler_sitter.cpp" />
     <ClCompile Include="src\party_settler_sleeper.cpp" />
     <ClCompile Include="src\party_settler_slot.cpp" />
+    <ClCompile Include="src\party_settler_time.cpp" />
+    <ClCompile Include="src\party_settler_type_i.cpp" />
     <ClCompile Include="src\strings.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,7 +174,9 @@
     <ClInclude Include="include\party_settler_sleeper.h" />
     <ClInclude Include="include\party_settler_slot.h" />
     <ClInclude Include="include\party_settler_slot_id.h" />
-    <ClInclude Include="include\party_settler_type.h" />
+    <ClInclude Include="include\party_settler_time.h" />
+    <ClInclude Include="include\party_settler_type_e.h" />
+    <ClInclude Include="include\party_settler_type_i.h" />
     <ClInclude Include="include\party_settler_value_index.h" />
     <ClInclude Include="include\party_settler_value_index_eater.h" />
     <ClInclude Include="include\party_settler_value_index_guard.h" />

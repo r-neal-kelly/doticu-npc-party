@@ -271,6 +271,8 @@ namespace doticu_skylib { namespace doticu_npcp {
                                 }
                             }
                             Await_Threads(threads);
+                        } else {
+                            return;
                         }
                     }
                     threads.clear();
@@ -289,6 +291,8 @@ namespace doticu_skylib { namespace doticu_npcp {
                                 }
                             }
                             Await_Threads(threads);
+                        } else {
+                            return;
                         }
                     }
                     threads.clear();
@@ -307,6 +311,8 @@ namespace doticu_skylib { namespace doticu_npcp {
                                 }
                             }
                             Await_Threads(threads);
+                        } else {
+                            return;
                         }
                     }
                     threads.clear();

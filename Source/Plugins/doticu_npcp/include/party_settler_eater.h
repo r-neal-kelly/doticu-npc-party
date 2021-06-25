@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/calendar_time.h"
 #include "doticu_skylib/enum_preferred_speed.h"
 
 #include "intrinsic.h"
@@ -13,13 +12,15 @@
 #include "party_settler_id.h"
 #include "party_settler_marker.h"
 #include "party_settler_radius.h"
-#include "party_settler_type.h"
+#include "party_settler_time.h"
+#include "party_settler_type_i.h"
 #include "party_settler_value_index_eater.h"
 #include "party_settler_wander_distance.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Settler_Eater_t
+    class Settler_Eater_t :
+        public Settler_Type_i
     {
     public:
         using Flags_e   = Settler_Flags_Eater_e;
@@ -33,12 +34,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
-            Flags_e                             flags;
-            maybe<Calendar_Time_t>              time;
-            maybe<Calendar_Time_t>              duration;
-            maybe<Settler_Marker_t>             marker;
-            maybe<Settler_Radius_t>             radius;
-            maybe<Preferred_Speed_e>            speed;
             maybe<Settler_Attention_t>          attention;
             maybe<Settler_Wander_Distance_t>    wander_distance;
 
@@ -78,23 +73,48 @@ namespace doticu_skylib { namespace doticu_npcp {
         Settler_Eater_t(Settler_Eater_t&& other) noexcept = delete;
         Settler_Eater_t& operator =(const Settler_Eater_t& other) = delete;
         Settler_Eater_t& operator =(Settler_Eater_t&& other) noexcept = delete;
-        ~Settler_Eater_t();
 
     public:
-        void    On_After_New_Game();
-        void    On_Before_Save_Game(std::ofstream& file);
-        void    On_After_Save_Game();
-        void    On_Before_Load_Game();
-        void    On_After_Load_Game(std::ifstream& file);
-        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        virtual         ~Settler_Eater_t();
+
+        virtual void    On_After_New_Game() override;
+        virtual void    On_Before_Save_Game(std::ofstream& file) override;
+        virtual void    On_After_Save_Game() override;
+        virtual void    On_Before_Load_Game() override;
+        virtual void    On_After_Load_Game(std::ifstream& file) override;
+        virtual void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update) override;
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&        State();
+        const State_t&  State() const;
+        Save_t&         Save();
+        const Save_t&   Save() const;
 
     public:
-        Bool_t              Is_Enabled();
-        void                Is_Enabled(Bool_t value);
+        Bool_t              Allow_Already_Held_Food();
+        void                Allow_Already_Held_Food(Bool_t value);
+        Bool_t              Allow_Conversation();
+        void                Allow_Conversation(Bool_t value);
+        Bool_t              Allow_Eating();
+        void                Allow_Eating(Bool_t value);
+        Bool_t              Allow_Fake_Food();
+        void                Allow_Fake_Food(Bool_t value);
+        Bool_t              Allow_Horse_Riding();
+        void                Allow_Horse_Riding(Bool_t value);
+        Bool_t              Allow_Idle_Markers();
+        void                Allow_Idle_Markers(Bool_t value);
+        Bool_t              Allow_Sitting();
+        void                Allow_Sitting(Bool_t value);
+        Bool_t              Allow_Sleeping();
+        void                Allow_Sleeping(Bool_t value);
+        Bool_t              Allow_Special_Furniture();
+        void                Allow_Special_Furniture(Bool_t value);
+        Bool_t              Allow_Wandering();
+        void                Allow_Wandering(Bool_t value);
+        Bool_t              Only_Preferred_Path();
+        void                Only_Preferred_Path(Bool_t value);
+        Bool_t              Unlock_On_Arrival();
+        void                Unlock_On_Arrival(Bool_t value);
 
         some<Package_t*>    Package(some<Settler_ID_t> settler_id);
 

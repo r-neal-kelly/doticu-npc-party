@@ -3,6 +3,11 @@
 */
 
 #include "npcp.inl"
+#include "party_settler_eater.h"
+#include "party_settler_guard.h"
+#include "party_settler_sandboxer.h"
+#include "party_settler_sitter.h"
+#include "party_settler_sleeper.h"
 #include "party_settler_slot.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
@@ -26,19 +31,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         NPCP.Read(file, this->settler_type);
     }
 
-    Settler_Slot_t::Settler_u::Settler_u() :
-        sandboxer()
-    {
-    }
-
-    Settler_Slot_t::Settler_u::~Settler_u()
-    {
-    }
-
     Settler_Slot_t::State_t::State_t() :
         save(),
 
-        settler()
+        settler_interface()
     {
     }
 
@@ -65,62 +61,50 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Slot_t::On_After_New_Game()
     {
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_After_New_Game();
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_After_New_Game();
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_After_New_Game();
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_After_New_Game();
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_After_New_Game();
+        if (Is_Active()) {
+            State().settler_interface.On_After_New_Game();
+        }
     }
 
     void Settler_Slot_t::On_Before_Save_Game(std::ofstream& file)
     {
         Save().Write(file);
 
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_Before_Save_Game(file);
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_Before_Save_Game(file);
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_Before_Save_Game(file);
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_Before_Save_Game(file);
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_Before_Save_Game(file);
+        if (Is_Active()) {
+            State().settler_interface.On_Before_Save_Game(file);
+        }
     }
 
     void Settler_Slot_t::On_After_Save_Game()
     {
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_After_Save_Game();
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_After_Save_Game();
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_After_Save_Game();
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_After_Save_Game();
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_After_Save_Game();
+        if (Is_Active()) {
+            State().settler_interface.On_After_Save_Game();
+        }
     }
 
     void Settler_Slot_t::On_Before_Load_Game()
     {
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_Before_Load_Game();
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_Before_Load_Game();
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_Before_Load_Game();
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_Before_Load_Game();
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_Before_Load_Game();
+        if (Is_Active()) {
+            State().settler_interface.On_Before_Load_Game();
+        }
     }
 
     void Settler_Slot_t::On_After_Load_Game(std::ifstream& file)
     {
         Save().Read(file);
 
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_After_Load_Game(file);
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_After_Load_Game(file);
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_After_Load_Game(file);
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_After_Load_Game(file);
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_After_Load_Game(file);
+        if (Is_Active()) {
+            State().settler_interface.On_After_Load_Game(file);
+        }
     }
 
     void Settler_Slot_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
         Save().Read(file);
 
-        if (Save().settler_type == Settler_Type_e::SANDBOXER)       State().settler.sandboxer.On_After_Load_Game(file, version_to_update);
-        else if (Save().settler_type == Settler_Type_e::SLEEPER)    State().settler.sleeper.On_After_Load_Game(file, version_to_update);
-        else if (Save().settler_type == Settler_Type_e::SITTER)     State().settler.sitter.On_After_Load_Game(file, version_to_update);
-        else if (Save().settler_type == Settler_Type_e::EATER)      State().settler.eater.On_After_Load_Game(file, version_to_update);
-        else if (Save().settler_type == Settler_Type_e::GUARD)      State().settler.guard.On_After_Load_Game(file, version_to_update);
+        if (Is_Active()) {
+            State().settler_interface.On_After_Load_Game(file, version_to_update);
+        }
     }
 
     Settler_Slot_t::State_t& Settler_Slot_t::State()
@@ -128,7 +112,17 @@ namespace doticu_skylib { namespace doticu_npcp {
         return this->state;
     }
 
+    const Settler_Slot_t::State_t& Settler_Slot_t::State() const
+    {
+        return this->state;
+    }
+
     Settler_Slot_t::Save_t& Settler_Slot_t::Save()
+    {
+        return State().save;
+    }
+
+    const Settler_Slot_t::Save_t& Settler_Slot_t::Save() const
     {
         return State().save;
     }

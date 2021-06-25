@@ -46,7 +46,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         public:
             Save_t          save;
 
-            Settler_Slot_t  slots[8];
+            Settler_Slot_t  slots[MAX_SETTLER_SLOTS];
 
         public:
             State_t();
@@ -100,11 +100,15 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         some<Actor_t*>      Actor();
         Member_t&           Member();
+        some<Reference_t*>  Marker();
 
         Settler_Slot_t&     Slot(some<Settler_Slot_ID_t> slot_id);
 
     public:
-        void    Evaluate_In_Parallel(std::mutex& parallel_lock);
+        Vector_t<some<Settler_Slot_t*>> Active_Slots();
+        Vector_t<some<Settler_Time_t>>  Interpolate_Slot_Times(const Vector_t<some<Settler_Slot_t*>>& active_slots);
+
+        void                            Evaluate_In_Parallel(std::mutex& parallel_lock);
     };
 
 }}

@@ -260,40 +260,6 @@ namespace doticu_npcp { namespace Party {
     const Settler_Duration_t    Settlers_t::DEFAULT_DURATION(DEFAULT_DURATION_HOURS, DEFAULT_DURATION_MINUTES);
     const Settler_Time_t        Settlers_t::DEFAULT_TIME(DEFAULT_TIME_AM_PM, DEFAULT_TIME_HOUR, DEFAULT_TIME_MINUTE);
 
-    Bool_t Settlers_t::Has_Settler(some<Settler_ID_t> settler_id)
-    {
-        SKYLIB_ASSERT_SOME(settler_id);
-
-        return
-            Is_Enabled<Sandboxer_t>(settler_id) ||
-            Is_Enabled<Sleeper_t>(settler_id) ||
-            Is_Enabled<Sitter_t>(settler_id) ||
-            Is_Enabled<Eater_t>(settler_id) ||
-            Is_Enabled<Guard_t>(settler_id);
-        return false;
-    }
-
-    Bool_t Settlers_t::Has_Settler(some<Member_ID_t> member_id)
-    {
-        SKYLIB_ASSERT_SOME(member_id);
-
-        if (Members().Has_Member(member_id)) {
-            return Has_Settler(some<Settler_ID_t>(member_id()));
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t Settlers_t::Has_Settler(some<Actor_t*> actor)
-    {
-        maybe<Member_ID_t> valid_member_id = Members().Used_Member_ID(actor);
-        if (valid_member_id) {
-            return Has_Settler(some<Settler_ID_t>(valid_member_id()));
-        } else {
-            return false;
-        }
-    }
-
     void Settlers_t::Bool(some<Package_t*> package,
                           Settler_Value_Index_e index,
                           Bool_t value,

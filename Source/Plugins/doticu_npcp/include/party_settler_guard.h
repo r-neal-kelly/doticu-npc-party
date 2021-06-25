@@ -4,22 +4,18 @@
 
 #pragma once
 
-#include "doticu_skylib/calendar_time.h"
-#include "doticu_skylib/enum_preferred_speed.h"
-
 #include "intrinsic.h"
 #include "party_settler_attention.h"
 #include "party_settler_flags_guard.h"
 #include "party_settler_id.h"
-#include "party_settler_marker.h"
-#include "party_settler_radius.h"
-#include "party_settler_type.h"
+#include "party_settler_type_i.h"
 #include "party_settler_value_index_guard.h"
 #include "party_settler_wander_distance.h"
 
 namespace doticu_skylib { namespace doticu_npcp {
 
-    class Settler_Guard_t
+    class Settler_Guard_t :
+        public Settler_Type_i
     {
     public:
         using Flags_e   = Settler_Flags_Guard_e;
@@ -32,14 +28,6 @@ namespace doticu_skylib { namespace doticu_npcp {
     public:
         class Save_t
         {
-        public:
-            Flags_e                     flags;
-            maybe<Calendar_Time_t>      time;
-            maybe<Calendar_Time_t>      duration;
-            maybe<Settler_Marker_t>     marker;
-            maybe<Settler_Radius_t>     radius;
-            maybe<Preferred_Speed_e>    speed;
-
         public:
             Save_t();
             Save_t(const Save_t& other) = delete;
@@ -76,24 +64,24 @@ namespace doticu_skylib { namespace doticu_npcp {
         Settler_Guard_t(Settler_Guard_t&& other) noexcept = delete;
         Settler_Guard_t& operator =(const Settler_Guard_t& other) = delete;
         Settler_Guard_t& operator =(Settler_Guard_t&& other) noexcept = delete;
-        ~Settler_Guard_t();
 
     public:
-        void    On_After_New_Game();
-        void    On_Before_Save_Game(std::ofstream& file);
-        void    On_After_Save_Game();
-        void    On_Before_Load_Game();
-        void    On_After_Load_Game(std::ifstream& file);
-        void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update);
+        virtual         ~Settler_Guard_t();
+
+        virtual void    On_After_New_Game() override;
+        virtual void    On_Before_Save_Game(std::ofstream& file) override;
+        virtual void    On_After_Save_Game() override;
+        virtual void    On_Before_Load_Game() override;
+        virtual void    On_After_Load_Game(std::ifstream& file) override;
+        virtual void    On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update) override;
 
     public:
-        State_t&    State();
-        Save_t&     Save();
+        State_t&        State();
+        const State_t&  State() const;
+        Save_t&         Save();
+        const Save_t&   Save() const;
 
     public:
-        Bool_t              Is_Enabled();
-        void                Is_Enabled(Bool_t value);
-
         some<Package_t*>    Package(some<Settler_ID_t> settler_id);
 
     public:

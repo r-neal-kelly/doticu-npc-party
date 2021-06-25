@@ -21,12 +21,6 @@ namespace doticu_skylib { namespace doticu_npcp {
     }
 
     Settler_Eater_t::Save_t::Save_t() :
-        flags(),
-        time(),
-        duration(),
-        marker(),
-        radius(),
-        speed(),
         attention(),
         wander_distance()
     {
@@ -38,24 +32,12 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Eater_t::Save_t::Write(std::ofstream& file)
     {
-        NPCP.Write(file, this->flags);
-        NPCP.Write(file, this->time);
-        NPCP.Write(file, this->duration);
-        this->marker.Write(file);
-        NPCP.Write(file, this->radius);
-        NPCP.Write(file, this->speed);
         NPCP.Write(file, this->attention);
         NPCP.Write(file, this->wander_distance);
     }
 
     void Settler_Eater_t::Save_t::Read(std::ifstream& file)
     {
-        NPCP.Read(file, this->flags);
-        NPCP.Read(file, this->time);
-        NPCP.Read(file, this->duration);
-        this->marker.Read(file);
-        NPCP.Read(file, this->radius);
-        NPCP.Read(file, this->speed);
         NPCP.Read(file, this->attention);
         NPCP.Read(file, this->wander_distance);
     }
@@ -80,32 +62,46 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Eater_t::On_After_New_Game()
     {
+        Settler_Type_i::On_After_New_Game();
     }
 
     void Settler_Eater_t::On_Before_Save_Game(std::ofstream& file)
     {
+        Settler_Type_i::On_Before_Save_Game(file);
+
         Save().Write(file);
     }
 
     void Settler_Eater_t::On_After_Save_Game()
     {
+        Settler_Type_i::On_After_Save_Game();
     }
 
     void Settler_Eater_t::On_Before_Load_Game()
     {
+        Settler_Type_i::On_Before_Load_Game();
     }
 
     void Settler_Eater_t::On_After_Load_Game(std::ifstream& file)
     {
+        Settler_Type_i::On_After_Load_Game(file);
+
         Save().Read(file);
     }
 
     void Settler_Eater_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
+        Settler_Type_i::On_After_Load_Game(file, version_to_update);
+
         Save().Read(file);
     }
 
     Settler_Eater_t::State_t& Settler_Eater_t::State()
+    {
+        return this->state;
+    }
+
+    const Settler_Eater_t::State_t& Settler_Eater_t::State() const
     {
         return this->state;
     }
@@ -115,14 +111,129 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
-    Bool_t Settler_Eater_t::Is_Enabled()
+    const Settler_Eater_t::Save_t& Settler_Eater_t::Save() const
     {
-        return Save().flags.Is_Flagged(Flags_e::IS_ENABLED);
+        return State().save;
     }
 
-    void Settler_Eater_t::Is_Enabled(Bool_t value)
+    Bool_t Settler_Eater_t::Allow_Already_Held_Food()
     {
-        Save().flags.Is_Flagged(Flags_e::IS_ENABLED, value);
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_ALREADY_HELD_FOOD);
+    }
+
+    void Settler_Eater_t::Allow_Already_Held_Food(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_ALREADY_HELD_FOOD, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Conversation()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_CONVERSATION);
+    }
+
+    void Settler_Eater_t::Allow_Conversation(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_CONVERSATION, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Eating()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_EATING);
+    }
+
+    void Settler_Eater_t::Allow_Eating(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_EATING, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Fake_Food()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_FAKE_FOOD);
+    }
+
+    void Settler_Eater_t::Allow_Fake_Food(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_FAKE_FOOD, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Horse_Riding()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_HORSE_RIDING);
+    }
+
+    void Settler_Eater_t::Allow_Horse_Riding(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_HORSE_RIDING, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Idle_Markers()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_IDLE_MARKERS);
+    }
+
+    void Settler_Eater_t::Allow_Idle_Markers(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_IDLE_MARKERS, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Sitting()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SITTING);
+    }
+
+    void Settler_Eater_t::Allow_Sitting(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SITTING, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Sleeping()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SLEEPING);
+    }
+
+    void Settler_Eater_t::Allow_Sleeping(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SLEEPING, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Special_Furniture()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SPECIAL_FURNITURE);
+    }
+
+    void Settler_Eater_t::Allow_Special_Furniture(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_SPECIAL_FURNITURE, value);
+    }
+
+    Bool_t Settler_Eater_t::Allow_Wandering()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_WANDERING);
+    }
+
+    void Settler_Eater_t::Allow_Wandering(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ALLOW_WANDERING, value);
+    }
+
+    Bool_t Settler_Eater_t::Only_Preferred_Path()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ONLY_PREFERRED_PATH);
+    }
+
+    void Settler_Eater_t::Only_Preferred_Path(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ONLY_PREFERRED_PATH, value);
+    }
+
+    Bool_t Settler_Eater_t::Unlock_On_Arrival()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::UNLOCK_ON_ARRIVAL);
+    }
+
+    void Settler_Eater_t::Unlock_On_Arrival(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::UNLOCK_ON_ARRIVAL, value);
     }
 
     some<Package_t*> Settler_Eater_t::Package(some<Settler_ID_t> settler_id)

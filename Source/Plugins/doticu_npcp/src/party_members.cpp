@@ -787,7 +787,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             if (id) {
                 Write_Locker_t locker(actor->x_list.lock);
                 Member_t& member = Member(id());
-                member.Set(id(), actor, none<Actor_t*>());
+                member.Activate(id(), actor, none<Actor_t*>());
                 if (member.Is_Active()) {
                     Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                     return &member;
@@ -813,7 +813,7 @@ namespace doticu_skylib { namespace doticu_npcp {
                 if (clone) {
                     Write_Locker_t locker(clone->x_list.lock);
                     Member_t& member = Member(id());
-                    member.Set(id(), clone(), actor);
+                    member.Activate(id(), clone(), actor);
                     if (member.Is_Active()) {
                         Alias(id())->Fill(member.Actor(), none<Virtual::Callback_i*>());
                         return &member;
@@ -867,7 +867,7 @@ namespace doticu_skylib { namespace doticu_npcp {
             }
 
             member.Alias()->Unfill(none<Virtual::Callback_i*>());
-            member.Unset();
+            member.Deactivate();
 
             return true;
         } else {

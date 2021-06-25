@@ -2,6 +2,9 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/form_list.h"
+#include "doticu_skylib/reference.h"
+
 #include "npcp.inl"
 #include "party.h"
 #include "party_member.h"
@@ -207,11 +210,64 @@ namespace doticu_skylib { namespace doticu_npcp {
         return Members().Member(Member_ID());
     }
 
+    some<Reference_t*> Settler_t::Marker()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        maybe<Reference_t*> marker = Consts_t::NPCP::Form_List::Settler_Markers()->Static_At(Settler_ID()())->As_Reference()();
+        SKYLIB_ASSERT(marker);
+
+        return marker();
+    }
+
     Settler_Slot_t& Settler_t::Slot(some<Settler_Slot_ID_t> slot_id)
     {
         SKYLIB_ASSERT(Is_Active());
 
         return State().slots[slot_id()];
+    }
+
+    Vector_t<some<Settler_Slot_t*>> Settler_t::Active_Slots()
+    {
+        Vector_t<some<Settler_Slot_t*>> active_slots;
+        active_slots.reserve(8);
+
+        for (size_t idx = 0; idx < MAX_SETTLER_SLOTS; idx += 1) {
+            if (State().slots[idx].Is_Active()) {
+                active_slots.push_back(&State().slots[idx]);
+            }
+        }
+
+        /*active_slots.Sort(
+            [](some<Settler_Slot_t*>& a, some<Settler_Slot_t*>& b)->Int_t
+            {
+                return a.start.In_Minutes() - b.start.In_Minutes();
+            }
+        );
+
+        const size_t time_count = times.size();
+        if (time_count > 1) {
+            const size_t last_idx = time_count - 1;
+            for (size_t idx = 0, end = last_idx; idx < end; idx += 1) {
+                some<Settler_Time_t>& a = times[idx];
+                some<Settler_Time_t>& b = times[idx + 1];
+                if (a.stop.In_Minutes() > b.start.In_Minutes()) {
+                    a.stop = b.start;
+                }
+            }
+            some<Settler_Time_t>& a = times[last_idx];
+            some<Settler_Time_t>& b = times[0];
+            if (a.stop.In_Minutes() > b.start.In_Minutes()) {
+                a.stop = b.start;
+            }
+        }*/
+
+        return std::move(active_slots);
+    }
+
+    Vector_t<some<Settler_Time_t>> Settler_t::Interpolate_Slot_Times(const Vector_t<some<Settler_Slot_t*>>& active_slots)
+    {
+
     }
 
     void Settler_t::Evaluate_In_Parallel(std::mutex& parallel_lock)

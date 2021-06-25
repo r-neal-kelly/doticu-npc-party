@@ -22,12 +22,6 @@ namespace doticu_skylib { namespace doticu_npcp {
     }
 
     Settler_Sitter_t::Save_t::Save_t() :
-        flags(),
-        time(),
-        duration(),
-        marker(),
-        radius(),
-        speed(),
         seat()
     {
     }
@@ -38,23 +32,11 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Sitter_t::Save_t::Write(std::ofstream& file)
     {
-        NPCP.Write(file, this->flags);
-        NPCP.Write(file, this->time);
-        NPCP.Write(file, this->duration);
-        this->marker.Write(file);
-        NPCP.Write(file, this->radius);
-        NPCP.Write(file, this->speed);
         NPCP.Write_Form(file, this->seat);
     }
 
     void Settler_Sitter_t::Save_t::Read(std::ifstream& file)
     {
-        NPCP.Read(file, this->flags);
-        NPCP.Read(file, this->time);
-        NPCP.Read(file, this->duration);
-        this->marker.Read(file);
-        NPCP.Read(file, this->radius);
-        NPCP.Read(file, this->speed);
         NPCP.Read_Form(file, this->seat);
     }
 
@@ -78,32 +60,46 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Sitter_t::On_After_New_Game()
     {
+        Settler_Type_i::On_After_New_Game();
     }
 
     void Settler_Sitter_t::On_Before_Save_Game(std::ofstream& file)
     {
+        Settler_Type_i::On_Before_Save_Game(file);
+
         Save().Write(file);
     }
 
     void Settler_Sitter_t::On_After_Save_Game()
     {
+        Settler_Type_i::On_After_Save_Game();
     }
 
     void Settler_Sitter_t::On_Before_Load_Game()
     {
+        Settler_Type_i::On_Before_Load_Game();
     }
 
     void Settler_Sitter_t::On_After_Load_Game(std::ifstream& file)
     {
+        Settler_Type_i::On_After_Load_Game(file);
+
         Save().Read(file);
     }
 
     void Settler_Sitter_t::On_After_Load_Game(std::ifstream& file, const Version_t<u16> version_to_update)
     {
+        Settler_Type_i::On_After_Load_Game(file, version_to_update);
+
         Save().Read(file);
     }
 
     Settler_Sitter_t::State_t& Settler_Sitter_t::State()
+    {
+        return this->state;
+    }
+
+    const Settler_Sitter_t::State_t& Settler_Sitter_t::State() const
     {
         return this->state;
     }
@@ -113,14 +109,29 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
-    Bool_t Settler_Sitter_t::Is_Enabled()
+    const Settler_Sitter_t::Save_t& Settler_Sitter_t::Save() const
     {
-        return Save().flags.Is_Flagged(Flags_e::IS_ENABLED);
+        return State().save;
     }
 
-    void Settler_Sitter_t::Is_Enabled(Bool_t value)
+    Bool_t Settler_Sitter_t::Only_Preferred_Path()
     {
-        Save().flags.Is_Flagged(Flags_e::IS_ENABLED, value);
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ONLY_PREFERRED_PATH);
+    }
+
+    void Settler_Sitter_t::Only_Preferred_Path(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::ONLY_PREFERRED_PATH, value);
+    }
+
+    Bool_t Settler_Sitter_t::Stop_Movement()
+    {
+        return Settler_Type_i::Save().flags.Is_Flagged(Flags_e::STOP_MOVEMENT);
+    }
+
+    void Settler_Sitter_t::Stop_Movement(Bool_t value)
+    {
+        Settler_Type_i::Save().flags.Is_Flagged(Flags_e::STOP_MOVEMENT, value);
     }
 
     some<Package_t*> Settler_Sitter_t::Package(some<Settler_ID_t> settler_id)

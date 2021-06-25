@@ -143,8 +143,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save_t&                 Save();
         const Save_t&           Save() const;
 
-        void                    Set(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original);
-        void                    Unset();
+        void                    Activate(some<Member_ID_t> member_id, some<Actor_t*> actor, maybe<Actor_t*> original);
+        void                    Deactivate();
 
         maybe<Settler_ID_t>     Paired_Settler_ID() const;
         void                    Paired_Settler_ID(maybe<Settler_ID_t> settler_id);
@@ -172,27 +172,18 @@ namespace doticu_skylib { namespace doticu_npcp {
 
         Bool_t                      Is_Banished();
         void                        Is_Banished(Bool_t value);
-
         Bool_t                      Is_Clone();
         void                        Is_Clone(Bool_t value);
-
         Bool_t                      Is_Immobile();
         void                        Is_Immobile(Bool_t value);
-
         Bool_t                      Is_Mannequin();
         void                        Is_Mannequin(Bool_t value);
-
         Bool_t                      Is_Reanimated();
         void                        Is_Reanimated(Bool_t value);
-
         Bool_t                      Is_Sneak();
         void                        Is_Sneak(Bool_t value);
-
         Bool_t                      Is_Thrall();
         void                        Is_Thrall(Bool_t value);
-
-        Bool_t                      Is_Enabled();
-        Bool_t                      Is_Untouchable();
 
         Bool_t                      Is_Warrior();
         Bool_t                      Is_Mage();
@@ -204,6 +195,8 @@ namespace doticu_skylib { namespace doticu_npcp {
         Bool_t                      Is_Essential();
         Bool_t                      Is_Invulnerable();
 
+        Bool_t                      Is_Enabled();
+        Bool_t                      Is_Untouchable();
         Bool_t                      Has_AI();
 
         Bool_t                      Has_Suit(some<Member_Suit_Type_e> type);
