@@ -24,6 +24,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         using Index_e   = Settler_Value_Index_e;
 
     public:
+        static constexpr Settler_Radius_t::value_type   DEFAULT_RADIUS  = 2048;
+        static constexpr Preferred_Speed_e::value_type  DEFAULT_SPEED   = Preferred_Speed_e::WALK;
+
+    public:
         class Save_t
         {
         public:
@@ -87,40 +91,59 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Save_t&   Save() const;
 
     public:
-        Bool_t  Is_Enabled();
+        Bool_t  Is_Active() const;
+
+        Bool_t  Is_Enabled() const;
         void    Is_Enabled(Bool_t value);
 
-        Bool_t  Allow_Swimming();
+        Bool_t  Allow_Swimming() const;
         void    Allow_Swimming(Bool_t value);
-        Bool_t  Always_Sneak();
+        Bool_t  Always_Sneak() const;
         void    Always_Sneak(Bool_t value);
-        Bool_t  Ignore_Combat();
+        Bool_t  Ignore_Combat() const;
         void    Ignore_Combat(Bool_t value);
-        Bool_t  Keep_Weapons_Drawn();
+        Bool_t  Keep_Weapons_Drawn() const;
         void    Keep_Weapons_Drawn(Bool_t value);
-        Bool_t  Hide_Weapons();
+        Bool_t  Hide_Weapons() const;
         void    Hide_Weapons(Bool_t value);
-        Bool_t  Skip_Combat_Alert();
+        Bool_t  Skip_Combat_Alert() const;
         void    Skip_Combat_Alert(Bool_t value);
 
-        Bool_t  Allow_Hellos_To_Player();
+        Bool_t  Allow_Hellos_To_Player() const;
         void    Allow_Hellos_To_Player(Bool_t value);
-        Bool_t  Allow_Hellos_To_NPCs();
+        Bool_t  Allow_Hellos_To_NPCs() const;
         void    Allow_Hellos_To_NPCs(Bool_t value);
-        Bool_t  Allow_Idle_Chatter();
+        Bool_t  Allow_Idle_Chatter() const;
         void    Allow_Idle_Chatter(Bool_t value);
-        Bool_t  Allow_Aggro_Radius();
+        Bool_t  Allow_Aggro_Radius() const;
         void    Allow_Aggro_Radius(Bool_t value);
-        Bool_t  Allow_World_Interactions();
+        Bool_t  Allow_World_Interactions() const;
         void    Allow_World_Interactions(Bool_t value);
-        Bool_t  Comment_On_Friendly_Fire();
+        Bool_t  Comment_On_Friendly_Fire() const;
         void    Comment_On_Friendly_Fire(Bool_t value);
-        Bool_t  Inspect_Corpses();
+        Bool_t  Inspect_Corpses() const;
         void    Inspect_Corpses(Bool_t value);
-        Bool_t  Observe_Combat();
+        Bool_t  Observe_Combat() const;
         void    Observe_Combat(Bool_t value);
-        Bool_t  React_To_Player_Actions();
+        Bool_t  React_To_Player_Actions() const;
         void    React_To_Player_Actions(Bool_t value);
+
+    public:
+        some<Settler_Time_t>    Time() const;
+        void                    Time(some<Settler_Time_t> value);
+
+        some<Settler_Marker_t>  Marker() const;
+        void                    Marker(some<Settler_Marker_t> value);
+
+        some<Settler_Radius_t>  Radius() const;
+        void                    Radius(some<Settler_Radius_t> value);
+
+        some<Preferred_Speed_e> Speed() const;
+        void                    Speed(some<Preferred_Speed_e> value);
+
+    public:
+        void    Activate(some<Settler_Time_t> time, some<Settler_Marker_t> marker);
+        void    Deactivate();
     };
 
 }}

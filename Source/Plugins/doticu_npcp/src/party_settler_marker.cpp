@@ -70,12 +70,12 @@ namespace doticu_skylib { namespace doticu_npcp {
         NPCP.Read(file, this->rotation);
     }
 
-    Bool_t Settler_Marker_t::Is_Valid()
+    Bool_t Settler_Marker_t::Is_Valid() const
     {
         return this->interior_cell_or_worldspace != none<Form_t*>();
     }
 
-    Settler_Marker_t::operator Bool_t()
+    Settler_Marker_t::operator Bool_t() const
     {
         return Is_Valid();
     }

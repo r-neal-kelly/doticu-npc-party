@@ -243,9 +243,9 @@ namespace doticu_skylib { namespace doticu_npcp {
             {
                 return a.start.In_Minutes() - b.start.In_Minutes();
             }
-        );
+        );*/
 
-        const size_t time_count = times.size();
+        /*const size_t time_count = times.size();
         if (time_count > 1) {
             const size_t last_idx = time_count - 1;
             for (size_t idx = 0, end = last_idx; idx < end; idx += 1) {

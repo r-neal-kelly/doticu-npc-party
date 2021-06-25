@@ -13,7 +13,7 @@
 namespace doticu_skylib { namespace doticu_npcp {
 
     Settler_Slot_t::Save_t::Save_t() :
-        settler_type()
+        type()
     {
     }
 
@@ -23,18 +23,18 @@ namespace doticu_skylib { namespace doticu_npcp {
 
     void Settler_Slot_t::Save_t::Write(std::ofstream& file)
     {
-        NPCP.Write(file, this->settler_type);
+        NPCP.Write(file, this->type);
     }
 
     void Settler_Slot_t::Save_t::Read(std::ifstream& file)
     {
-        NPCP.Read(file, this->settler_type);
+        NPCP.Read(file, this->type);
     }
 
     Settler_Slot_t::State_t::State_t() :
         save(),
 
-        settler_interface()
+        settler()
     {
     }
 
@@ -52,7 +52,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     {
         SKYLIB_ASSERT_SOME(settler_type);
 
-        Save().settler_type = settler_type;
+        Save().type = settler_type;
     }
 
     Settler_Slot_t::~Settler_Slot_t()
@@ -62,7 +62,7 @@ namespace doticu_skylib { namespace doticu_npcp {
     void Settler_Slot_t::On_After_New_Game()
     {
         if (Is_Active()) {
-            State().settler_interface.On_After_New_Game();
+            State().settler.On_After_New_Game();
         }
     }
 
@@ -71,21 +71,21 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().Write(file);
 
         if (Is_Active()) {
-            State().settler_interface.On_Before_Save_Game(file);
+            State().settler.On_Before_Save_Game(file);
         }
     }
 
     void Settler_Slot_t::On_After_Save_Game()
     {
         if (Is_Active()) {
-            State().settler_interface.On_After_Save_Game();
+            State().settler.On_After_Save_Game();
         }
     }
 
     void Settler_Slot_t::On_Before_Load_Game()
     {
         if (Is_Active()) {
-            State().settler_interface.On_Before_Load_Game();
+            State().settler.On_Before_Load_Game();
         }
     }
 
@@ -94,7 +94,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().Read(file);
 
         if (Is_Active()) {
-            State().settler_interface.On_After_Load_Game(file);
+            State().settler.On_After_Load_Game(file);
         }
     }
 
@@ -103,7 +103,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         Save().Read(file);
 
         if (Is_Active()) {
-            State().settler_interface.On_After_Load_Game(file, version_to_update);
+            State().settler.On_After_Load_Game(file, version_to_update);
         }
     }
 
@@ -127,9 +127,50 @@ namespace doticu_skylib { namespace doticu_npcp {
         return State().save;
     }
 
-    Bool_t Settler_Slot_t::Is_Active()
+    Bool_t Settler_Slot_t::Is_Active() const
     {
-        return Save().settler_type != none<Settler_Type_e>();
+        return Save().type != none<Settler_Type_e>();
+    }
+
+    some<Settler_Type_e> Settler_Slot_t::Type() const
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return Save().type();
+    }
+
+    some<Settler_Type_i*> Settler_Slot_t::Settler()
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return &State().settler;
+    }
+
+    some<const Settler_Type_i*> Settler_Slot_t::Settler() const
+    {
+        SKYLIB_ASSERT(Is_Active());
+
+        return &State().settler;
+    }
+
+    void Settler_Slot_t::Activate(some<Settler_Type_e> type, some<Settler_Time_t> time, some<Settler_Marker_t> marker)
+    {
+        SKYLIB_ASSERT_SOME(type);
+        SKYLIB_ASSERT_SOME(time);
+        SKYLIB_ASSERT_SOME(marker);
+
+        Deactivate();
+
+        Save().type = type();
+        State().settler.Activate(time, marker);
+    }
+
+    void Settler_Slot_t::Deactivate()
+    {
+        State().settler.Deactivate();
+
+        this->~Settler_Slot_t();
+        new (this) Settler_Slot_t();
     }
 
 }}

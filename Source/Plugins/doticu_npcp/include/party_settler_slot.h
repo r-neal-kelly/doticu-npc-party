@@ -16,7 +16,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         class Save_t
         {
         public:
-            maybe<Settler_Type_e>   settler_type;
+            maybe<Settler_Type_e>   type;
 
         public:
             Save_t();
@@ -36,7 +36,7 @@ namespace doticu_skylib { namespace doticu_npcp {
         public:
             Save_t          save;
 
-            Settler_Type_i  settler_interface;
+            Settler_Type_i  settler;
 
         public:
             State_t();
@@ -74,7 +74,17 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Save_t&   Save() const;
 
     public:
-        Bool_t  Is_Active();
+        Bool_t  Is_Active() const;
+
+    public:
+        some<Settler_Type_e>        Type() const;
+
+        some<Settler_Type_i*>       Settler();
+        some<const Settler_Type_i*> Settler() const;
+
+    public:
+        void    Activate(some<Settler_Type_e> type, some<Settler_Time_t> time, some<Settler_Marker_t> marker);
+        void    Deactivate();
 
         void    Evaluate_In_Parallel(std::mutex& parallel_lock);
     };

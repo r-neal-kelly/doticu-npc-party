@@ -31,10 +31,10 @@ namespace doticu_skylib { namespace doticu_npcp {
         void    Read(std::ifstream& file);
 
     public:
-        Bool_t  Is_Valid();
+        Bool_t  Is_Valid() const;
 
     public:
-        explicit operator   Bool_t();
+        explicit operator   Bool_t() const;
     };
 
 }}

@@ -91,10 +91,6 @@ namespace doticu_skylib { namespace doticu_npcp {
         const Save_t&   Save() const;
 
     public:
-        void    Activate(some<Settler_Time_t> time, some<Settler_Marker_t> marker);
-        void    Deactivate();
-
-    public:
         Bool_t              Allow_Conversation();
         void                Allow_Conversation(Bool_t value);
         Bool_t              Allow_Eating();
